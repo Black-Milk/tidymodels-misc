@@ -59,18 +59,18 @@ tidy(model_logit_obj)
 ```
 
     ## # A tibble: 51 x 5
-    ##    term           estimate  std.error statistic  p.value
-    ##    <chr>             <dbl>      <dbl>     <dbl>    <dbl>
-    ##  1 (Intercept)  3.32       1.04           3.18  0.00147 
-    ##  2 funded_amnt -0.00000390 0.00000680    -0.574 0.566   
-    ##  3 termterm_60  0.434      0.128          3.40  0.000670
-    ##  4 int_rate     0.364      0.158          2.30  0.0215  
-    ##  5 sub_gradeA2 -0.168      1.17          -0.144 0.886   
-    ##  6 sub_gradeA3 -1.12       0.954         -1.17  0.241   
-    ##  7 sub_gradeA4 -0.365      1.20          -0.304 0.761   
-    ##  8 sub_gradeA5 -2.19       0.807         -2.71  0.00673 
-    ##  9 sub_gradeB1 -2.34       0.841         -2.78  0.00538 
-    ## 10 sub_gradeB2 -2.30       0.938         -2.45  0.0143  
+    ##    term           estimate    std.error statistic  p.value
+    ##    <chr>             <dbl>        <dbl>     <dbl>    <dbl>
+    ##  1 (Intercept)  3.75         1.14          3.29   0.00100 
+    ##  2 funded_amnt -0.00000763   0.00000701   -1.09   0.276   
+    ##  3 termterm_60  0.505        0.131         3.85   0.000120
+    ##  4 int_rate     0.343        0.163         2.11   0.0353  
+    ##  5 sub_gradeA2 -0.577        1.24         -0.464  0.642   
+    ##  6 sub_gradeA3 -2.13         0.912        -2.34   0.0193  
+    ##  7 sub_gradeA4 11.3        248.            0.0455 0.964   
+    ##  8 sub_gradeA5 -1.72         1.01         -1.70   0.0883  
+    ##  9 sub_gradeB1 -2.64         0.952        -2.77   0.00564 
+    ## 10 sub_gradeB2 -2.68         1.03         -2.59   0.00953 
     ## # ... with 41 more rows
 
 ## Manual Method
@@ -120,16 +120,16 @@ probs_tbl
     ## # A tibble: 1,971 x 2
     ##        bad  good
     ##      <dbl> <dbl>
-    ##  1 0.0703  0.930
-    ##  2 0.0709  0.929
-    ##  3 0.1000  0.900
-    ##  4 0.00710 0.993
-    ##  5 0.00353 0.996
-    ##  6 0.0890  0.911
-    ##  7 0.161   0.839
-    ##  8 0.0267  0.973
-    ##  9 0.0118  0.988
-    ## 10 0.0506  0.949
+    ##  1 0.0348  0.965
+    ##  2 0.0431  0.957
+    ##  3 0.0653  0.935
+    ##  4 0.00751 0.992
+    ##  5 0.00428 0.996
+    ##  6 0.0691  0.931
+    ##  7 0.0437  0.956
+    ##  8 0.00268 0.997
+    ##  9 0.0291  0.971
+    ## 10 0.0925  0.907
     ## # ... with 1,961 more rows
 
 3.  The Predicted Outcome Classes
@@ -180,16 +180,16 @@ output_tbl
     ## # A tibble: 1,971 x 4
     ##    truth     bad  good prediction
     ##    <fct>   <dbl> <dbl> <fct>     
-    ##  1 good  0.0703  0.930 good      
-    ##  2 good  0.0709  0.929 good      
-    ##  3 good  0.1000  0.900 good      
-    ##  4 good  0.00710 0.993 good      
-    ##  5 good  0.00353 0.996 good      
-    ##  6 good  0.0890  0.911 good      
-    ##  7 good  0.161   0.839 good      
-    ##  8 good  0.0267  0.973 good      
-    ##  9 good  0.0118  0.988 good      
-    ## 10 good  0.0506  0.949 good      
+    ##  1 good  0.0348  0.965 good      
+    ##  2 good  0.0431  0.957 good      
+    ##  3 good  0.0653  0.935 good      
+    ##  4 good  0.00751 0.992 good      
+    ##  5 good  0.00428 0.996 good      
+    ##  6 good  0.0691  0.931 good      
+    ##  7 good  0.0437  0.956 good      
+    ##  8 good  0.00268 0.997 good      
+    ##  9 good  0.0291  0.971 good      
+    ## 10 good  0.0925  0.907 good      
     ## # ... with 1,961 more rows
 
 ## predict\_binary() Function
@@ -206,16 +206,16 @@ model_predictions_tbl
     ## # A tibble: 1,971 x 4
     ##    truth     bad  good prediction
     ##    <fct>   <dbl> <dbl> <fct>     
-    ##  1 good  0.0703  0.930 good      
-    ##  2 good  0.0709  0.929 good      
-    ##  3 good  0.1000  0.900 good      
-    ##  4 good  0.00710 0.993 good      
-    ##  5 good  0.00353 0.996 good      
-    ##  6 good  0.0890  0.911 good      
-    ##  7 good  0.161   0.839 good      
-    ##  8 good  0.0267  0.973 good      
-    ##  9 good  0.0118  0.988 good      
-    ## 10 good  0.0506  0.949 good      
+    ##  1 good  0.0348  0.965 good      
+    ##  2 good  0.0431  0.957 good      
+    ##  3 good  0.0653  0.935 good      
+    ##  4 good  0.00751 0.992 good      
+    ##  5 good  0.00428 0.996 good      
+    ##  6 good  0.0691  0.931 good      
+    ##  7 good  0.0437  0.956 good      
+    ##  8 good  0.00268 0.997 good      
+    ##  9 good  0.0291  0.971 good      
+    ## 10 good  0.0925  0.907 good      
     ## # ... with 1,961 more rows
 
 The function provides various arguments, such as .thresh that allows the
@@ -240,14 +240,14 @@ model_predictions_tbl
     ## # A tibble: 1,971 x 4
     ##    truth     bad  good prediction
     ##    <fct>   <dbl> <dbl> <fct>     
-    ##  1 good  0.0703  0.930 bad       
-    ##  2 good  0.0709  0.929 bad       
-    ##  3 good  0.1000  0.900 bad       
-    ##  4 good  0.00710 0.993 good      
-    ##  5 good  0.00353 0.996 good      
-    ##  6 good  0.0890  0.911 bad       
-    ##  7 good  0.161   0.839 bad       
-    ##  8 good  0.0267  0.973 good      
-    ##  9 good  0.0118  0.988 good      
-    ## 10 good  0.0506  0.949 bad       
+    ##  1 good  0.0348  0.965 good      
+    ##  2 good  0.0431  0.957 good      
+    ##  3 good  0.0653  0.935 bad       
+    ##  4 good  0.00751 0.992 good      
+    ##  5 good  0.00428 0.996 good      
+    ##  6 good  0.0691  0.931 bad       
+    ##  7 good  0.0437  0.956 good      
+    ##  8 good  0.00268 0.997 good      
+    ##  9 good  0.0291  0.971 good      
+    ## 10 good  0.0925  0.907 bad       
     ## # ... with 1,961 more rows

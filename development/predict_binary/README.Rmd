@@ -16,16 +16,14 @@ The output of this function will include:
 1. The 'truth' (that is, what the actual outcome was)
 2. The predicted probability for each class (restricted to only two classes)
 3. The predicted response class based on the predicted probability of the "positive class"
-
-```{r message=FALSE}
+```{r load libraries, message=FALSE}
 library(tidyverse)
 library(glue)
 library(tidymodels)
 ```
 
 We will use the LendingClub data available in the parsnip package to demonstrate how this function works.
-
-```{r}
+```{r load data}
 class_data_tbl <- parsnip::lending_club %>%
   select(Class, funded_amnt:sub_grade, annual_inc, emp_length, revol_util)
 
@@ -97,103 +95,11 @@ output_tbl
 ## predict_binary() Function
 
 The predict_binary() function automates the aforementioned process
-
-```{r echo = FALSE}
-predict_binary <- function(object, new_data, response, positive = NULL,
-                           .thresh = 0.5, .verbose = FALSE) {
-
-  # Format input variable(s) and preliminary check(s)
-  mode <- object$spec$mode
-
-  if (mode != "classification") stop("predict_binary() should only be used with classification models")
-
-  response_expr <- enquo(response)
-
-  response_is_factor <- new_data %>%
-    pull(!!response_expr) %>%
-    is.factor()
-
-  if (!response_is_factor) stop("Response variable must be a factor")
-
-  outcome_levels <- new_data %>% pull(!!response_expr) %>% levels()
-
-  if (!between(.thresh, 0, 1)) stop("Threshold must be between 0 and 1")
-
-
-  # Main function body
-
-  # Determine truth
-  truth_tbl <- new_data %>%
-    select(!!response_expr) %>%
-    set_names("truth")
-
-  if (.verbose) print(glue("Truth column set to {quo_name(response_expr)}..."))
-
-  # Calculate probabilities
-  probs_tbl <- object %>%
-    predict(new_data = new_data, type = "prob") %>%
-    set_names(str_remove_all(names(.), ".pred_"))
-
-  if (.verbose) print(glue("Predicted probabilities calculated..."))
-
-  # Determine positive outcome level
-  if (is.null(positive)) {
-
-    inferred_positive_level <- probs_tbl %>%
-      gather() %>%
-      group_by(key) %>%
-      summarize(mean_prob = mean(value)) %>%
-      ungroup() %>%
-      filter(mean_prob == max(mean_prob)) %>%
-      pull(key)
-
-    if (.verbose)
-      print(glue("No positive outcome level given... inferred as {inferred_positive_level}"))
-
-  } else {
-
-    if (positive %in% outcome_levels) {
-
-      inferred_positive_level <- positive
-
-    } else {
-
-      stop(glue("Level {positive} is not a level in response variable {quo_name(response_expr)}"))
-
-    }
-
-
-  }
-
-  # Calculate predicted class
-  inferred_negative_level <- outcome_levels[outcome_levels != inferred_positive_level]
-
-  preds_tbl <- probs_tbl %>%
-    select(inferred_positive_level) %>%
-    set_names("Class1") %>%
-    mutate(
-      prediction = case_when(
-        Class1 >= .thresh ~ inferred_positive_level,
-        TRUE              ~ inferred_negative_level
-      ) %>% factor(levels = outcome_levels)
-    ) %>%
-    select(prediction)
-
-  if (.verbose) print(glue("Predicted response classes determined..."))
-
-
-  output_tbl <- truth_tbl %>%
-    bind_cols(probs_tbl) %>%
-    bind_cols(preds_tbl)
-
-  if (.verbose) print(glue("Function completed successfully"))
-
-  return(output_tbl)
-
-}
+```{r load function, echo = FALSE}
+source("../../functions/predict_binary.R")
 ```
 
-```{r}
+```{r function demo}
 model_predictions_tbl <- model_logit_obj %>% 
   predict_binary(new_data = test_tbl, response = Class, positive = "good")
 
@@ -202,7 +108,7 @@ model_predictions_tbl
 
 The function provides various arguments, such as .thresh that allows the user to change the probability threshold that determines which the outcome class is, and .verbose that keeps the user informed as to where the function is executing
 
-```{r}
+```{r arguments}
 model_predictions_tbl <- model_logit_obj %>% 
   predict_binary(new_data = test_tbl, response = Class, positive = "good", .thresh = 0.95, .verbose = TRUE)
 
