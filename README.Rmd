@@ -14,11 +14,11 @@ This repository is a place for me to develop and test functions that build upon 
 __Current Functions__:
 
 * tune_cv_reg() : automated k-fold cross-validation hyperparameter tuning for regression-based parsnip models
+* predict_binary() : standardize output of predictions on classification-based parsnip models (truth, class probabilities, and outcome class)
 
 
 __In Development__:
 
-* predict_binary() : standardize output of predictions on classification-based parsnip models (truth, class probabilities, and outcome class)
 * tune_cv_class() : automated k-fold cross-validation hyperparameter tuning for classification-based parsnip models
 
 

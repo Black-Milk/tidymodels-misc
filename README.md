@@ -9,12 +9,12 @@ needed in my day-to-day work.
 
   - tune\_cv\_reg() : automated k-fold cross-validation hyperparameter
     tuning for regression-based parsnip models
-
-**In Development**:
-
   - predict\_binary() : standardize output of predictions on
     classification-based parsnip models (truth, class probabilities, and
     outcome class)
+
+**In Development**:
+
   - tune\_cv\_class() : automated k-fold cross-validation hyperparameter
     tuning for classification-based parsnip models
 
