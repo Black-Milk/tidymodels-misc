@@ -1,0 +1,115 @@
+---
+title: "tune_cv_reg()"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Motivation
+
+The goal of this function is to automate k-fold cross-validation for regression models within the tidymodels ecosystem
+```{r load packages, message = FALSE}
+  library(MASS)
+  library(tidyverse)
+  library(tidymodels)
+  library(caret)
+  library(glue)
+```
+
+We will use the Boston Housing data to demonstrate training a random forest regression model
+```{r load data}
+  boston_tbl <- MASS::Boston %>%
+    as_tibble() %>%
+    rename(price = medv) %>%
+    select(price, everything())
+  
+  glimpse(boston_tbl)
+```
+
+
+## Cross-validation in caret
+
+Using the caret package, k-fold cross-validation was done using the train() and trainControl() functions
+```{r caret example}
+  # set random seed
+  set.seed(1234)
+  
+  # split into 80% training set and 20% testing set
+  split_caret_obj <- createDataPartition(boston_tbl$price, p = .8, list = FALSE)
+  train_caret_tbl <- boston_tbl[ split_caret_obj, ]
+  test_caret_tbl  <- boston_tbl[-split_caret_obj, ]
+  
+  # 5-fold cross-validation
+  ctrl <- trainControl(method = "cv", number = 5)
+  
+  # tuning grid for randomForest (mtry)
+  tuning_grid_caret_obj <- expand.grid(mtry = c(4:7))
+  
+  # train the randomForest
+  rf_fit_obj <- train(
+    price ~ .,
+    data       = train_caret_tbl,
+    trControl  = ctrl,
+    tuneGrid   = tuning_grid_caret_obj,
+    ntree      = 100,
+    importance = TRUE
+  )
+  
+  rf_fit_obj
+```
+
+
+## Cross-validation in parsnip & tidymodels
+
+Using the tidymodels packages, k-fold cross-validation can be done using tune_cv_reg()
+```{r load functions, echo = FALSE}
+  source(here::here("functions/tune_cv_reg.R"))
+```
+
+```{r tidymodels example}
+  # set random seed
+  set.seed(1234)
+
+  # split into 80% training set and 20% testing set
+  split_rsample_obj <- rsample::initial_split(boston_tbl, prop = 0.8)
+  train_rsample_tbl <- rsample::training(split_rsample_obj)
+  test_rsample_tbl  <- rsample::testing(split_rsample_obj)
+  
+  # set up the base random forest object
+  model_base_obj <- parsnip::rand_forest(mode = "regression") %>%
+    parsnip::set_engine("randomForest") %>%
+    parsnip::set_args(mtry = varying(), trees = 100, importance = TRUE)
+    
+  # tuning grid for randomForest (mtry)
+  tuning_grid_dials_obj <- dials::grid_regular(
+    dials::mtry  %>% range_set(c(4, 7)),
+    levels = 4
+  )
+  
+  # cross-validate the random forest
+  tuning_grid_metrics_tbl <- model_base_obj %>% 
+    tune_cv_reg(
+      data     = train_rsample_tbl,
+      grid     = tuning_grid_dials_obj,
+      response = price,
+      k        = 5,
+      n        = 1
+    )
+  
+  tuning_grid_metrics_tbl
+  
+  tuning_grid_metrics_tbl %>% 
+    arrange(rmse)
+
+```
+
+
+## Current status and future updates
+
+Note that this function is very limited, and is nowhere near "production-ready". I developed it to help tune parameters for a few regression models I was building for work, and thought it might be a useful bit of code for anyone who may run across it.
+
+Future iterations will include full beginning-to-end automatic hyperparameter tuning and training. The output will be a list that includes items such as information about the base model, the training data supplied to the function, the rsample vfold_cv() result that is used inside the function, the final model trained with the "best" parameters, etc.
+
+I hope to devote more time to building out its functionality in the future, but it is more likely that the R Studio team (or someone much better at R than I am) creates their own automatic parameter tuning functions for tidymodels way before then.
